@@ -12,7 +12,7 @@ namespace BlockChain
             string host = "localhost";
             string port = "12345";
 
-            var server = new TinyWebServer.WebServer(request =>
+            var server = new TinyWebServer(request =>
             {
                 string path = request.Url.PathAndQuery.ToLower();
                 string query = "";
@@ -38,6 +38,10 @@ namespace BlockChain
 
                         json = new StreamReader(request.InputStream).ReadToEnd();
                         Transaction trx = JsonConvert.DeserializeObject<Transaction>(json);
+                        if (trx == null)
+                        {
+                            return "Transaction failed";
+                        }
                         int blockId = chain.CreateTransaction(trx.Sender, trx.Recipient, trx.Amount);
                         return $"Your transaction will be included in block {blockId}";
 
